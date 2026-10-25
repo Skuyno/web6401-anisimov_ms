@@ -2,42 +2,97 @@
  * Напишите функцию, которая проверяет, является ли число целым используя побитовые операторы
  * @param {*} n
  */
-function isInteger(n) {}
+function isInteger(n) {
+    const integerPart = n | 0;
+    return integerPart === n;
+}
 
 /**
  * Напишите функцию, которая возвращает массив четных чисел от 2 до 20 включительно
  */
-function even() {}
+function even() {
+    const numbers = [];
+
+    for (let number = 2; number <= 20; number += 2) {
+        numbers.push(number);
+    }
+
+    return numbers;
+}
 
 /**
  * Напишите функцию, считающую сумму чисел до заданного используя цикл
  * @param {*} n
  */
-function sumTo(n) {}
+function sumTo(n) {
+    let sum = 0;
+
+    for (let number = 1; number <= n; number++) {
+        sum += number;
+    }
+
+    return sum;
+}
 
 /**
  * Напишите функцию, считающую сумму чисел до заданного используя рекурсию
  * @param {*} n
  */
-function recSumTo(n) {}
+function recSumTo(n) {
+    if (n === 0) {
+        return 0;
+    }
+
+    return n + recSumTo(n - 1);
+}
 
 /**
  * Напишите функцию, считающую факториал заданного числа
  * @param {*} n
  */
-function factorial(n) {}
+function factorial(n) {
+    let result = 1;
+
+    for (let number = 2; number <= n; number++) {
+        result *= number;
+    }
+
+    return result;
+}
 
 /**
  * Напишите функцию, которая определяет, является ли число двойкой, возведенной в степень
  * @param {*} n
  */
-function isBinary(n) {}
+function isBinary(n) {
+    if (!isInteger(n) || n <= 0) {
+        return false;
+    }
+
+    // Последовательно делим число на 2, пока оно чётное.
+    while (n % 2 === 0) {
+        n /= 2;
+    }
+
+    return n === 1;
+}
 
 /**
  * Напишите функцию, которая находит N-е число Фибоначчи
  * @param {*} n
  */
-function fibonacci(n) {}
+function fibonacci(n) {
+    let previous = 0;
+    let current = 1;
+
+    for (let index = 0; index < n; index++) {
+        const next = previous + current;
+        previous = current;
+        current = next;
+    }
+
+    return previous;
+}
 
 /** Напишите функцию, которая принимает начальное значение и функцию операции
  * и возвращает функцию - выполняющую эту операцию.
@@ -50,7 +105,17 @@ function fibonacci(n) {}
  * console.log(sumFn(5)) - 15
  * console.log(sumFn(3)) - 18
  */
-function getOperationFn(initialValue, operatorFn) {}
+function getOperationFn(initialValue, operatorFn) {
+    let storedValue = initialValue;
+
+    return function (newValue) {
+        if (operatorFn !== undefined) {
+            storedValue = operatorFn(storedValue, newValue);
+        }
+
+        return storedValue;
+    };
+}
 
 /**
  * Напишите функцию создания генератора арифметической последовательности.
@@ -68,7 +133,15 @@ function getOperationFn(initialValue, operatorFn) {}
  * console.log(generator()); // 7
  * console.log(generator()); // 9
  */
-function sequence(start, step) {}
+function sequence(start = 0, step = 1) {
+    let current = start;
+
+    return function () {
+        const result = current;
+        current += step;
+        return result;
+    };
+}
 
 /**
  * Напишите функцию deepEqual, которая принимает два значения
@@ -84,7 +157,54 @@ function sequence(start, step) {}
  * deepEqual({arr: [22, 33], text: 'text'}, {arr: [22, 33], text: 'text'}) // true
  * deepEqual({arr: [22, 33], text: 'text'}, {arr: [22, 3], text: 'text2'}) // false
  */
-function deepEqual(firstObject, secondObject) {}
+function deepEqual(firstObject, secondObject) {
+    if (firstObject === secondObject) {
+        return true;
+    }
+
+    // В отличие от обычного сравнения, считаем два NaN равными.
+    if (Number.isNaN(firstObject) && Number.isNaN(secondObject)) {
+        return true;
+    }
+
+    if (
+        firstObject === null ||
+        secondObject === null ||
+        typeof firstObject !== 'object' ||
+        typeof secondObject !== 'object'
+    ) {
+        return false;
+    }
+
+    if (Array.isArray(firstObject) !== Array.isArray(secondObject)) {
+        return false;
+    }
+
+    if (
+        Array.isArray(firstObject) &&
+        firstObject.length !== secondObject.length
+    ) {
+        return false;
+    }
+
+    const firstKeys = Object.keys(firstObject);
+    const secondKeys = Object.keys(secondObject);
+
+    if (firstKeys.length !== secondKeys.length) {
+        return false;
+    }
+
+    for (const key of firstKeys) {
+        if (
+            !Object.prototype.hasOwnProperty.call(secondObject, key) ||
+            !deepEqual(firstObject[key], secondObject[key])
+        ) {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 module.exports = {
     isInteger,
